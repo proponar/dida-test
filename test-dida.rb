@@ -1,8 +1,9 @@
 require 'selenium-webdriver'
+require 'test/unit'
 
-class DidaTest
-  def initialize
-    @driver = Selenium::WebDriver.for :chrome
+class DidaTest < Test::Unit::TestCase
+  def setup
+    @driver = Selenium::WebDriver.for(:chrome)
   end
 
   attr_reader :driver
@@ -87,26 +88,37 @@ class DidaTest
     driver.find_element(xpath: '//span[@class="MuiButton-label" and text()="Ano"]').click
   end
 
-  def test_all
-    login
-    search_entry('husa')
-    open_edit_entry
-    sleep(0.2)
-    close_entry
-
-    sleep(0.2)
-    new_entry('test')
-    sleep(0.2)
-    #driver.find_element(xpath: '//button[@aria-label="Clear"]').click
-    driver.find_element(xpath: '//div[@name="hesloSel"]//input').send_keys(:backspace, :backspace, :backspace, :backspace)
-    search_entry('test')
-    sleep(0.2)
-    new_exemp('foobar')
-    edit_delete_exemp('foobar')
-    sleep 5
-  ensure
+  def teardown
     driver.quit
   end
-end
 
-DidaTest.new.test_all
+  def test_all
+    assert_nothing_thrown('login failed') do
+      login
+    end
+
+    assert_nothing_thrown('edit entry failed') do
+      search_entry('husa')
+      open_edit_entry
+      sleep(0.2)
+      close_entry
+      sleep(0.2)
+    end
+
+    assert_nothing_thrown('new entry failed') do
+      new_entry('test')
+      sleep(0.2)
+      #driver.find_element(xpath: '//button[@aria-label="Clear"]').click
+      driver.find_element(xpath: '//div[@name="hesloSel"]//input').send_keys(:backspace, :backspace, :backspace, :backspace)
+      search_entry('test')
+      sleep(0.2)
+    end
+
+    assert_nothing_thrown('create/remove exemp failed') do
+      new_exemp('foobar')
+      sleep(0.2)
+      edit_delete_exemp('foobar')
+      sleep(0.2)
+    end
+  end
+end
