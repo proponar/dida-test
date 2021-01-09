@@ -4,6 +4,7 @@ require 'test/unit'
 class DidaTest < Test::Unit::TestCase
   def setup
     @driver = Selenium::WebDriver.for(:chrome)
+    @sleep_time = 0.2
   end
 
   attr_reader :driver
@@ -17,11 +18,12 @@ class DidaTest < Test::Unit::TestCase
     driver.navigate.to "https://dida.hmpf.cz"
     wait_for(xpath: '//button[@type="submit"]')
 
-    login, password = File.read('.pass').split(':')
+    login, password = File.read('.pass').chomp.split(':')
     driver.find_element(xpath: '//input[@name="email"]').send_keys(login)
     driver.find_element(xpath: '//input[@name="password"]').send_keys(password)
+    sleep(@sleep_time)
     driver.find_element(xpath: '//button[@type="submit"]').click
-    sleep(0.2)
+    sleep(@sleep_time)
     wait_for(:class => "MuiTableContainer-root")
   end
   
@@ -52,7 +54,7 @@ class DidaTest < Test::Unit::TestCase
   def new_entry(heslo)
     driver.find_element(xpath: '//button[@aria-label="Přidat heslo"]').click
     wait_for(class: 'MuiDialogTitle-root')
-    sleep(0.2)
+    sleep(@sleep_time)
 
     driver.find_element(xpath: '//input[@name="heslo"]').send_keys(heslo)
     driver.find_element(xpath: '//span[@class="MuiButton-label" and text()="Uložit"]').click
@@ -61,7 +63,7 @@ class DidaTest < Test::Unit::TestCase
   def new_exemp(text)
     driver.find_element(xpath: '//button[@aria-label="Přidat exemplifikaci"]').click
     wait_for(class: 'MuiDialogTitle-root')
-    sleep(0.2)
+    sleep(@sleep_time)
     driver.find_element(xpath: '//textarea[@name="exemplifikace"]').send_keys(text)
     driver.find_element(xpath: '//input[@name="rok"]').send_keys('1984')
     driver.find_element(xpath: '//span[@class="MuiButton-label" and text()="Uložit"]').click
@@ -76,15 +78,15 @@ class DidaTest < Test::Unit::TestCase
 
     # wait for menu pop-up
     wait_for(xpath: '/html/body/div/div/ul/li')
-    sleep(0.2)
+    sleep(@sleep_time)
     driver.find_element(xpath: '//ul/li[text()="Editovat"]').click
 
     wait_for(class: 'MuiDialogTitle-root')
-    sleep(0.2)
+    sleep(@sleep_time)
     driver.find_element(xpath: '//span[@class="MuiButton-label" and text()="Smazat"]').click
 
     wait_for(xpath: '//h2[text()="Smazat exemplifikaci?"]')
-    sleep(0.2)
+    sleep(@sleep_time)
     driver.find_element(xpath: '//span[@class="MuiButton-label" and text()="Ano"]').click
   end
 
@@ -100,25 +102,25 @@ class DidaTest < Test::Unit::TestCase
     assert_nothing_thrown('edit entry failed') do
       search_entry('husa')
       open_edit_entry
-      sleep(0.2)
+      sleep(@sleep_time)
       close_entry
-      sleep(0.2)
+      sleep(@sleep_time)
     end
 
     assert_nothing_thrown('new entry failed') do
       new_entry('test')
-      sleep(0.2)
+      sleep(@sleep_time)
       #driver.find_element(xpath: '//button[@aria-label="Clear"]').click
       driver.find_element(xpath: '//div[@name="hesloSel"]//input').send_keys(:backspace, :backspace, :backspace, :backspace)
       search_entry('test')
-      sleep(0.2)
+      sleep(@sleep_time)
     end
 
     assert_nothing_thrown('create/remove exemp failed') do
       new_exemp('foobar')
-      sleep(0.2)
+      sleep(@sleep_time)
       edit_delete_exemp('foobar')
-      sleep(0.2)
+      sleep(@sleep_time)
     end
   end
 end
