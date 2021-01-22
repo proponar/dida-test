@@ -3,7 +3,9 @@ require 'test/unit'
 
 class DidaTest < Test::Unit::TestCase
   def setup
-    @driver = Selenium::WebDriver.for(:chrome)
+    options = Selenium::WebDriver::Chrome::Options.new
+    options.add_argument('--headless')
+    @driver = Selenium::WebDriver.for(:chrome, options: options)
     @sleep_time = 0.2
   end
 

@@ -1,0 +1,21 @@
+env:
+  RUBY_VERSION: 2.6
+name: Run hmpf
+on: [push, pull_request]
+jobs:
+  run_tests:
+    runs-on: ubuntu-20.04
+    steps:
+    - uses: actions/checkout@v1
+    - uses: actions/setup-ruby@v1
+      name: install ruby
+      with:
+        ruby-version: ${{ env.RUBY_VERSION }}
+    - name: setup gems
+      run: |
+         gem install bundler
+         bundler install
+    - uses: nanasess/setup-chromedriver@master
+      name: install chromedriver
+    - run: bundle exec ruby test-dida.rb
+      name: run tests
