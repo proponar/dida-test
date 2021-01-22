@@ -17,5 +17,9 @@ jobs:
          bundler install
     - uses: nanasess/setup-chromedriver@master
       name: install chromedriver
+    - name: setup secrets
+      env:
+        PASS: ${{ secrets.PASS }}
+      run: echo "$env:PASS" > .pass
     - run: bundle exec ruby test-dida.rb
       name: run tests
