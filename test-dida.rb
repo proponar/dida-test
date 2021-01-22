@@ -5,6 +5,9 @@ class DidaTest < Test::Unit::TestCase
   def setup
     options = Selenium::WebDriver::Chrome::Options.new
     options.add_argument('--headless')
+    options.add_argument('--window-size=1920x1080')
+    options.add_argument('--disable-infobars')
+    options.add_argument('--disable-extensions')
     @driver = Selenium::WebDriver.for(:chrome, options: options)
     @sleep_time = 0.2
   end
@@ -13,7 +16,7 @@ class DidaTest < Test::Unit::TestCase
 
   def wait_for(element={})
     # timeout in seconds
-    Selenium::WebDriver::Wait.new(:timeout => 10).until { driver.find_element(element) }
+    Selenium::WebDriver::Wait.new(:timeout => 10).until { driver.find_element(element).enabled? }
   end
 
   def login
@@ -59,7 +62,8 @@ class DidaTest < Test::Unit::TestCase
     sleep(@sleep_time)
 
     driver.find_element(xpath: '//input[@name="heslo"]').send_keys(heslo)
-    driver.find_element(xpath: '//span[@class="MuiButton-label" and text()="Uložit"]').click
+    #driver.find_element(xpath: '//span[@class="MuiButton-label" and text()="Uložit"]').click
+    driver.find_element(xpath: '//span[@class="MuiButton-label" and text()="Zrušit"]').click
   end
 
   def new_exemp(text)

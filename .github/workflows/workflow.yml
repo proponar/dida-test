@@ -5,6 +5,7 @@ on: [push, pull_request]
 jobs:
   run_tests:
     runs-on: ubuntu-20.04
+    environment: "test environment"
     steps:
     - uses: actions/checkout@v1
     - uses: actions/setup-ruby@v1
@@ -20,6 +21,6 @@ jobs:
     - name: setup secrets
       env:
         PASS: ${{ secrets.PASS }}
-      run: echo "$env:PASS" > .pass
+      run: echo "$PASS" > .pass
     - run: bundle exec ruby test-dida.rb
       name: run tests
